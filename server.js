@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const firebase = require("firebase");
 const router = express.Router();
@@ -5,7 +6,7 @@ const bodyParser = require("body-parser");
 var admin = require("firebase-admin");
 require("firebase/auth");
 const firebaseConfig = {
-  apiKey: process.env.API_Key,
+  apiKey: process.env.API_KEY,
   authDomain: process.env.AUTH_DOMAIN,
   projectId: process.env.PROJECT_ID,
   storageBucket: process.env.STORAGE_BUCKET,
@@ -28,7 +29,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 router.get("/contacts", async (req, res) => {
-  console.log("test");
   const allData = await db
     .collection("contacts")
     .get()
@@ -55,10 +55,15 @@ router.delete("/delete/:id", async (req, res) => {
   res.json("successful");
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/update/:id", async (req, res) => {
   const { id } = req.params;
 
-  await db.collection("contacts").doc(id).delete();
+  await db.collection("contacts").doc(id).update({
+    name: req.body.name,
+    email: req.body.email,
+    phone: req.body.phone,
+  });
+
   res.json("successful");
 });
 router.post("/signup", async (req, res) => {
@@ -104,5 +109,5 @@ router.post("/login", (req, res) => {
 const port = 5000;
 app.use("/", router);
 app.listen(port, () => {
-  // console.log(`server reunning at port: ${port}`);
+  console.log(`server reunning at port: ${port}`);
 });

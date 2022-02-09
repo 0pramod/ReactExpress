@@ -2,34 +2,33 @@ import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
-import "./Login.css";
-import { Link } from "react-router-dom";
-export default function Signup() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+import { useLocation } from "react-router-dom";
 
-  function validateForm() {
-    return email.length > 0 && password.length >= 6;
-  }
+export default function UpdateContacts() {
+  const location = useLocation();
+  const contactsData = location.state;
+
+  const [name, setName] = useState(contactsData.name);
+  const [email, setEmail] = useState(contactsData.email);
+  const [phone, setPhone] = useState(contactsData.phone);
+  const contactsID = contactsData.docID;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const response = await axios.post("/signup", {
+    const response = await axios.put(`/update/${contactsID}`, {
       name,
       email,
-      password,
+      phone,
     });
-
     if (response.status === 200) {
-      window.location.href = "http://localhost:3000/login";
+      window.location.href = "http://localhost:3000/contacts";
     }
   };
 
   return (
-    <div className="Signup">
-      <h2> Signup </h2>
+    <div className="Add Contacts">
+      <h2> Update Contacts </h2>
       <Form onSubmit={handleSubmit}>
         <Form.Group size="lg" controlId="name">
           <Form.Label>name</Form.Label>
@@ -44,24 +43,25 @@ export default function Signup() {
           <Form.Label>Email</Form.Label>
           <Form.Control
             autoFocus
+            required="required"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </Form.Group>
-        <Form.Group size="lg" controlId="password">
-          <Form.Label>Password</Form.Label>
+        <Form.Group size="lg" controlId="phone">
+          <Form.Label>Phone Number</Form.Label>
           <Form.Control
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="number"
+            value={phone}
+            required="required"
+            onChange={(e) => setPhone(e.target.value)}
           />
         </Form.Group>
-        <Button block size="lg" type="submit" disabled={!validateForm()}>
-          Signup
+        <Button block size="lg" type="submit">
+          Update
         </Button>
       </Form>
-      <Link to="/">Already Have an account Log In</Link>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import Signup from "./components/Login/Signup";
 import Home from "./components/Home/Home";
 import AddContacts from "./components/Contacts/AddContacts";
 import Contacts from "./components/Contacts/Contacts";
+import UpdateContacts from "./components/Contacts/UpdateContacts";
 function App() {
   return (
     <BrowserRouter>
@@ -13,7 +14,8 @@ function App() {
           <Route path="/" component={Login} exact />
           <Route path="/signup" component={Signup} />
           <AuthRoute path="/contacts" component={Contacts} />
-          <AddRoute path="/contacts/add" component={AddContacts} />
+          <AddRoute path="/addcontacts" component={AddContacts} />
+          <Route path="/updatecontacts" component={UpdateContacts} />
           <Route component={Error} />
         </Switch>
       </div>

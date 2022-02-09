@@ -17,6 +17,9 @@ export default function Signup() {
       phone,
       author,
     });
+    if (response.status === 200) {
+      window.location.href = "http://localhost:3000/contacts";
+    }
   };
 
   return (
@@ -36,6 +39,7 @@ export default function Signup() {
           <Form.Label>Email</Form.Label>
           <Form.Control
             autoFocus
+            required="required"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

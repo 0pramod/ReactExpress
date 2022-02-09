@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
@@ -10,7 +10,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
 
   function validateForm() {
-    return email.length > 0 && password.length > 6;
+    return email.length > 0 && password.length >= 6;
   }
 
   const handleSubmit = async (event) => {
@@ -24,7 +24,6 @@ export default function Login() {
     localStorage.setItem("idToken", response.data.idToken);
     localStorage.setItem("email", response.data.email);
     if (response.status === 200) {
-      // console.log("here");
       window.location.href = "http://localhost:3000/contacts";
     }
   };
@@ -52,6 +51,8 @@ export default function Login() {
         <Button block size="lg" type="submit" disabled={!validateForm()}>
           Login
         </Button>
+        <br></br>
+        <Link to="/signup">Dont have an account Sign up</Link>
       </Form>
     </div>
   );
