@@ -28,13 +28,17 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-router.get("/contacts", async (req, res) => {
+router.get("/contacts/:author", async (req, res) => {
+  const { author } = req.params;
+
   const allData = await db
     .collection("contacts")
+    .where("author", "==", author)
     .get()
     .then((querySnapshot) =>
       querySnapshot.docs.map((doc) => ({ ID: doc.id, DATA: doc.data() }))
     );
+
   res.json(allData);
 });
 router.post("/add", async (req, res) => {
@@ -86,8 +90,8 @@ router.post("/signup", async (req, res) => {
     }
   } catch (e) {}
 });
-router.post("/login", (req, res) => {
-  firebase
+router.post("/login", async (req, res) => {
+  await firebase
     .auth()
     .signInWithEmailAndPassword(req.body.email, req.body.password)
     .then(function () {
@@ -109,5 +113,5 @@ router.post("/login", (req, res) => {
 const port = 5000;
 app.use("/", router);
 app.listen(port, () => {
-  console.log(`server reunning at port: ${port}`);
+  //console.log(`server reunning at port: ${port}`);
 });

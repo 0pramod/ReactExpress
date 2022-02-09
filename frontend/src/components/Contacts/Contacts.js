@@ -9,7 +9,8 @@ export default function Contacts() {
 
   useEffect(() => {
     const getDataFromBackend = async () => {
-      const response = await axios.get("/contacts");
+      var author = localStorage.getItem("uid");
+      const response = await axios.get(`/contacts/${author}`);
 
       setcontactResponse(response.data);
 
