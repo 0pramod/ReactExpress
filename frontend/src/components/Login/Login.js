@@ -1,18 +1,33 @@
 import React, { useState } from "react";
+import { Redirect } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import axios from "axios";
 import "./Login.css";
+import Contacts from "../Contacts/Contacts";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   function validateForm() {
-    return email.length > 0 && password.length > 0;
+    return email.length > 0 && password.length > 6;
   }
 
-  function handleSubmit(event) {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-  }
+
+    const response = await axios.post("/login", {
+      email,
+      password,
+    });
+    localStorage.setItem("uid", response.data.uid);
+    localStorage.setItem("idToken", response.data.idToken);
+    localStorage.setItem("email", response.data.email);
+    if (response.status === 200) {
+      // console.log("here");
+      window.location.href = "http://localhost:3000/contacts";
+    }
+  };
 
   return (
     <div className="Login">
