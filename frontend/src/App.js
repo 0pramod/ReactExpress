@@ -15,7 +15,7 @@ function App() {
           <Route path="/signup" component={Signup} />
           <AuthRoute path="/contacts" component={Contacts} />
           <AddRoute path="/addcontacts" component={AddContacts} />
-          <Route path="/updatecontacts" component={UpdateContacts} />
+          <UpdateRoute path="/updatecontacts" component={UpdateContacts} />
           <Route component={Error} />
         </Switch>
       </div>
@@ -39,6 +39,15 @@ function AddRoute({ children, ...rest }) {
     return <Redirect to={{ pathname: "/" }} />;
   } else {
     return <AddContacts />;
+  }
+}
+function UpdateRoute({ children, ...rest }) {
+  const isUserLogIn = localStorage.getItem("idToken");
+
+  if (!isUserLogIn) {
+    return <Redirect to={{ pathname: "/" }} />;
+  } else {
+    return <UpdateContacts />;
   }
 }
 

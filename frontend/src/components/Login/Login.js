@@ -24,6 +24,7 @@ export default function Login() {
     localStorage.setItem("idToken", response.data.idToken);
     localStorage.setItem("email", response.data.email);
     if (response.status === 200) {
+      // console.log("here");
       window.location.href = "http://localhost:3000/contacts";
     }
   };

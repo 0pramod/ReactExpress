@@ -10,8 +10,8 @@ export default function Contacts() {
   useEffect(() => {
     const getDataFromBackend = async () => {
       const response = await axios.get("/contacts");
-      let dummy = response.data;
-      setcontactResponse(dummy);
+
+      setcontactResponse(response.data);
 
       setLoading(false);
     };
@@ -23,6 +23,10 @@ export default function Contacts() {
     if (response.data === "successful") window.location.reload(true);
   };
 
+  const logOut = () => {
+    window.localStorage.clear();
+    window.location.reload(true);
+  };
   return (
     <>
       {loading ? (
@@ -94,6 +98,7 @@ export default function Contacts() {
           >
             Add Contacts
           </button>
+          <button onClick={(e) => logOut(e)}> Logout</button>
         </div>
       )}
     </>
