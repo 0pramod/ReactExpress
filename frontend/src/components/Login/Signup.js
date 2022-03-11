@@ -32,7 +32,7 @@ export default function Signup() {
       <h2> Signup </h2>
       <Form onSubmit={handleSubmit}>
         <Form.Group size="lg" controlId="name">
-          <Form.Label>name</Form.Label>
+          <Form.Label>Name</Form.Label>
           <Form.Control
             autoFocus
             type="text"
@@ -57,11 +57,17 @@ export default function Signup() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
+        <br></br>
+
         <Button block size="lg" type="submit" disabled={!validateForm()}>
           Signup
         </Button>
       </Form>
-      <Link to="/">Already Have an account Log In</Link>
+      <br></br>
+      <p>
+        Already Have an account?
+        <Link to="/login"> Log In</Link>
+      </p>
     </div>
   );
 }

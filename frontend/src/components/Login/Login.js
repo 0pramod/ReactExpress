@@ -49,11 +49,16 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
+        <br></br>
         <Button block size="lg" type="submit" disabled={!validateForm()}>
           Login
         </Button>
         <br></br>
-        <Link to="/signup">Dont have an account Sign up</Link>
+        <br></br>
+        <p>
+          Dont have an account?
+          <Link to="/signup"> Sign up</Link>
+        </p>
       </Form>
     </div>
   );
