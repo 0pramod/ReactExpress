@@ -33,6 +33,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+
 router.get("/contacts/:author", async (req, res) => {
   const { author } = req.params;
 
@@ -87,77 +90,94 @@ router.put("/favourite/:id", async (req, res) => {
 /////
 const fileupload = require("express-fileupload");
 app.use(fileupload());
+global.XMLHttpRequest = require("xhr2");
+var XMLHttpRequest = require("xhr2");
+var xhr = new XMLHttpRequest();
 
-router.post("/photo", async (req, res) => {
-  console.log("here");
-  console.log(req.body.file);
-  const storageA = firebase.storage();
+var uploadFileToFirebaseStorage = (file) => {
+  const FirebaseStorage = firebase.storage();
+  const storageRef = FirebaseStorage.ref(`/images/${file.name}`);
+  storageRef
+    .put(file.data, {
+      contentType: file.mimetype,
+    })
+    .then(() => storageRef.getDownloadURL()) // after upload, obtain the download URL
+    .then(
+      (url) => {
+        // persisted to storage successfully and obtained download URL
+        console.log("222", url);
+        return url;
+      },
+      (err) => {
+        // failed to save to storage
+        return 0;
+      }
+    )
+    .catch((err) => {
+      // if here, something has gone wrong while sending back the response
+      // likely a syntax error, or sending responses multiple times
+      return 0;
+    });
+};
+
+router.post("/photo", upload.single("image"), async (req, res) => {
+  //
+
   const file = req.files.file;
-  const filename = file.name;
   console.log(file);
-  //console.log(file.path);
-  console.log("filename:", filename);
-  const ref = storageA.ref(`/images/${file.name}`);
-  const uploadTask = ref.put(file);
+  const imageUrl = await uploadFileToFirebaseStorage(file);
+  console.log(imageUrl);
+  // const filename = file.name;
+  // //
 
-  uploadTask.on(
-    "state_changed",
-    (snapShot) => {
-      //takes a snap shot of the process as it is happening
-      console.log(snapShot);
-    },
-    (err) => {
-      //catches the errors
-      console.log(err);
-    },
-    () => {
-      // gets the functions from storage refences the image storage in firebase by the children
-      // gets the download url then sets the image from firebase as the value for the imgUrl key:
-      storage
-        .ref("images")
-        .child(file.name)
-        .getDownloadURL()
-        .then((fireBaseUrl) => {
-          setFile((prevObject) => ({
-            ...prevObject,
-            imgUrl: fireBaseUrl,
-          }));
-        });
-    }
-  );
+  // console.log("files", file);
+  // console.log("name", req.body.name);
+  // console.log("The thing", req.files.image);
+  // const storageA = firebase.storage();
+  // // const file = req.files.image;
 
-  // const storageRef = await firebase
-  //   .storage()
-  //   .ref("images/" + file.name)
-  //   .put(file);
-  // //if (storageRef) console.log(storageRef);
-  // //const fileRef = storageRef.child("photos");
-  //await storageRef.put(file);
-  // const link = await fileRef.getDownloadURL();
+  // console.log("filename:", file.name);
+  // console.log(file.data);
+  // const ref = storageA.ref(`/images/${file.name}`);
+  // ref
+  //   .put(file.data, {
+  //     contentType: file.mimetype,
+  //   })
+  //   .then(() => ref.getDownloadURL()) // after upload, obtain the download URL
+  //   .then(
+  //     (url) => {
+  //       // persisted to storage successfully and obtained download URL
+  //       res
+  //         .status(201)
+  //         .set("Content-Location", url) // use "Location" if you want to redirect to it
+  //         .json({
+  //           message: "Upload successful",
+  //           url: url,
+  //         });
+  //     },
+  //     (err) => {
+  //       // failed to save to storage
+  //       logger.error({
+  //         message: "Upload failed with error",
+  //         errorMessage: err.message,
+  //         errorStack: err.stack,
+  //       });
 
-  //const storageRef = firebase.storage().ref(`imges/${filename}`);
-  // uploadBytes(storageRef, file).then((snapshot) => {
-  //  console.log("Uploaded a blob or file!");
-  //});
-  // firebase.storage().child("Photos").child(filename).put(file);
-
-  // storageRef.on(
-  //   `state_changed`,
-  //   (snapshot) => {
-  //     //console.log(snapshot);
-  //     //console.log(storageRef.snapshot.ref.getDownloadURL().then(downloadURL));
-  //     // this.uploadValue =
-  //     //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  //   },
-  //   (error) => {
-  //     console.log(error.message);
-  //   }
-  //   // () => {
-  //   //   storageRef.snapshot.ref.getDownloadURL().then((downloadURL) => {
-  //   //     //this.$emit("audioUrl", downloadURL);
-  //   //   });
-  //   // }
-  // );
+  //       res.status(500).json({
+  //         message: "Upload failed",
+  //         error: err.code || "unknown",
+  //       });
+  //     }
+  //   )
+  //   .catch((err) => {
+  //     // if here, something has gone wrong while sending back the response
+  //     // likely a syntax error, or sending responses multiple times
+  //     logger.error({
+  //       message: "Unexpected rejection during /addImage",
+  //       errorMessage: err.message,
+  //       errorStack: err.stack,
+  //     });
+  //   });
 });
 ////
 router.post("/signup", async (req, res) => {

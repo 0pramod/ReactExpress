@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 import Nav from "../Nav";
+import ContactsForm from "./ContactsForm";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -26,6 +27,7 @@ export default function Signup() {
   return (
     <>
       <Nav></Nav>
+      <ContactsForm> </ContactsForm>
       <div className="Add Contacts">
         <h2> Add Contacts </h2>
         <Form onSubmit={handleSubmit}>
