@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./form.css";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Nav from "../Nav";
+import UpdateContacts from "./UpdateContacts";
 export default function Contacts() {
   const [contactResponse, setcontactResponse] = useState({});
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ export default function Contacts() {
     const response = await axios.put(`/favourite/${id}`, {
       status: !status,
     });
-    if (response.data === "successful") fetchData(); //window.location.reload(true);
+    if (response.data === "successful") window.location.reload(true); //fetchData();
   };
   const logOut = () => {
     window.localStorage.clear();
@@ -82,32 +82,33 @@ export default function Contacts() {
                       </div>
 
                       <img
-                        src="https://images.unsplash.com/photo-1645193601259-63ad87c0b4a9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                        src={person.DATA.image}
                         class="card-img-top"
                         alt="..."
                       />
                       <div class="card-body">
                         <h5 class="card-title">{person.DATA.name}</h5>{" "}
                         <p class="card-text">{person.DATA.email}</p>
+                        <p class="card-text">{person.DATA.address}</p>
                       </div>
                       <ul class="list-group list-group-flush">
-                        {person.DATA.home ? (
+                        {person.DATA.homeNumber ? (
                           <li class="list-group-item">
-                            Home: {person.DATA.home}
+                            Home: {person.DATA.homeNumber}
                           </li>
                         ) : (
                           <></>
                         )}
-                        {person.DATA.mobile ? (
+                        {person.DATA.mobileNumber ? (
                           <li class="list-group-item">
-                            Mobile: {person.DATA.mobile}
+                            Mobile: {person.DATA.mobileNumber}
                           </li>
                         ) : (
                           <></>
                         )}
-                        {person.DATA.office ? (
+                        {person.DATA.officeNumber ? (
                           <li class="list-group-item">
-                            Office: {person.DATA.office}
+                            Office: {person.DATA.officeNumber}
                           </li>
                         ) : (
                           <></>
@@ -117,12 +118,15 @@ export default function Contacts() {
                         <button class="card-link btn btn-warning">
                           <Link
                             to={{
-                              pathname: "/updatecontacts",
+                              pathname: "/form",
                               state: {
                                 docID: person.ID,
                                 name: person.DATA.name,
                                 email: person.DATA.email,
-                                phone: person.DATA.phone,
+                                address: person.DATA.address,
+                                mobileNumber: person.DATA.mobileNumber,
+                                homeNumber: person.DATA.homeNumber,
+                                officeNumber: person.DATA.officeNumber,
                               },
                             }}
                           >

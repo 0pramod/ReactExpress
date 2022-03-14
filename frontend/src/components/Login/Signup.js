@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
 import axios from "axios";
 import "./Login.css";
 import { Link } from "react-router-dom";
@@ -20,12 +18,13 @@ export default function Signup() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log(imageFile);
-    const response = await axios.post("/signup", {
-      name,
-      email,
-      password,
-      imageFile,
-    });
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("password", password);
+
+    const response = await axios.post("/signup", formData);
 
     if (response.status === 200) {
       window.location.href = "http://localhost:3000/login";
@@ -33,50 +32,9 @@ export default function Signup() {
   };
 
   return (
-    // <div className="Signup">
-    //   <h2> Signup </h2>
-    //   <Form onSubmit={handleSubmit}>
-    //     <Form.Group size="lg" controlId="name">
-    //       <Form.Label>Name</Form.Label>
-    //       <Form.Control
-    //         autoFocus
-    //         type="text"
-    //         value={name}
-    //         onChange={(e) => setName(e.target.value)}
-    //       />
-    //     </Form.Group>
-    //     <Form.Group size="lg" controlId="email">
-    //       <Form.Label>Email</Form.Label>
-    //       <Form.Control
-    //         autoFocus
-    //         type="email"
-    //         value={email}
-    //         onChange={(e) => setEmail(e.target.value)}
-    //       />
-    //     </Form.Group>
-    //     <Form.Group size="lg" controlId="password">
-    //       <Form.Label>Password</Form.Label>
-    //       <Form.Control
-    //         type="password"
-    //         value={password}
-    //         onChange={(e) => setPassword(e.target.value)}
-    //       />
-    //     </Form.Group>
-    //     <br></br>
-
-    //     <Button block size="lg" type="submit" disabled={!validateForm()}>
-    //       Signup
-    //     </Button>
-    //   </Form>
-    //   <br></br>
-    //   <p>
-    //     Already Have an account?
-    //     <Link to="/login"> Log In</Link>
-    //   </p>
-    // </div>
-
     <form class="row g-3" onSubmit={handleSubmit}>
       <div className="contact-form card shadow">
+        <h2> Create your account </h2>
         <div className="mb-3">
           <label for="formGroupExampleInput" className="form-label">
             Name
@@ -105,7 +63,6 @@ export default function Signup() {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-
         <div class=" mb-3">
           <label for="formGroupExampleInput2" className="form-label">
             Image
@@ -118,7 +75,6 @@ export default function Signup() {
             onChange={(e) => setImageFile(e.target.files[0])}
           />
         </div>
-
         <div className="mb-3">
           <label for="formGroupExampleInput2" className="form-label">
             Password
@@ -133,7 +89,6 @@ export default function Signup() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-
         <div className="mb-3">
           <label for="formGroupExampleInput2" className="form-label">
             Confirm password
@@ -148,7 +103,6 @@ export default function Signup() {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
-
         <div class="col-auto">
           <button
             type="submit"
@@ -158,6 +112,10 @@ export default function Signup() {
             Signup
           </button>
         </div>
+        <br></br>{" "}
+        <p>
+          Already Have an account? <Link to="/login"> Log In</Link>{" "}
+        </p>
       </div>
     </form>
   );

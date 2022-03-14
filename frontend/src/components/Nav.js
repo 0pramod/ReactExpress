@@ -39,7 +39,7 @@ export default function Nav() {
                 <Link
                   className="nav-link active"
                   aria-current="page"
-                  to="/addcontacts"
+                  to="/form"
                 >
                   Add contacts
                 </Link>

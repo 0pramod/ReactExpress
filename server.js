@@ -36,58 +36,6 @@ app.use(bodyParser.json());
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 
-router.get("/contacts/:author", async (req, res) => {
-  const { author } = req.params;
-
-  const allData = await db
-    .collection("contacts")
-    .where("author", "==", author)
-    .get()
-    .then((querySnapshot) =>
-      querySnapshot.docs.map((doc) => ({ ID: doc.id, DATA: doc.data() }))
-    );
-
-  res.json(allData);
-});
-router.post("/add", async (req, res) => {
-  dataToAdd = {
-    name: req.body.name,
-    phone: req.body.phone,
-    email: req.body.email,
-    author: req.body.author,
-    isFavourite: false,
-  };
-  await db.collection("contacts").add(dataToAdd);
-  res.json("Successfully Added");
-});
-
-router.delete("/delete/:id", async (req, res) => {
-  const { id } = req.params;
-  await db.collection("contacts").doc(id).delete();
-  res.json("successful");
-});
-
-router.put("/update/:id", async (req, res) => {
-  const { id } = req.params;
-
-  await db.collection("contacts").doc(id).update({
-    name: req.body.name,
-    email: req.body.email,
-    phone: req.body.phone,
-  });
-
-  res.json("successful");
-});
-router.put("/favourite/:id", async (req, res) => {
-  const { id } = req.params;
-
-  await db.collection("contacts").doc(id).update({
-    isFavourite: req.body.status,
-  });
-
-  res.json("successful");
-});
-/////
 const fileupload = require("express-fileupload");
 app.use(fileupload());
 global.XMLHttpRequest = require("xhr2");
@@ -95,6 +43,8 @@ var XMLHttpRequest = require("xhr2");
 var xhr = new XMLHttpRequest();
 
 var uploadFileToFirebaseStorage = (file) => {
+  console.log("here");
+  console.log("file:", file.data);
   const FirebaseStorage = firebase.storage();
   const storageRef = FirebaseStorage.ref(`/images/${file.name}`);
   storageRef
@@ -119,6 +69,103 @@ var uploadFileToFirebaseStorage = (file) => {
       return 0;
     });
 };
+
+//for contacts page
+router.get("/contacts/:author", async (req, res) => {
+  const { author } = req.params;
+
+  const allData = await db
+    .collection("contacts")
+    .where("author", "==", author)
+    .get()
+    .then((querySnapshot) =>
+      querySnapshot.docs.map((doc) => ({ ID: doc.id, DATA: doc.data() }))
+    );
+
+  res.json(allData);
+});
+
+// for adding new contacts
+router.post("/add", async (req, res) => {
+  const file = req.files.file;
+  let fileLink;
+  //console.log(req.body);
+
+  const FirebaseStorage = firebase.storage();
+  const storageRef = FirebaseStorage.ref(`/images/${file.name}`);
+  await storageRef
+    .put(file.data, {
+      contentType: file.mimetype,
+    })
+    .then(() => storageRef.getDownloadURL()) // after upload, obtain the download URL
+    .then(
+      (url) => {
+        // persisted to storage successfully and obtained download URL
+        fileLink = url;
+      },
+      (err) => {
+        // failed to save to storage
+        return 0;
+      }
+    )
+    .catch((err) => {
+      // if here, something has gone wrong while sending back the response
+      // likely a syntax error, or sending responses multiple times
+      return 0;
+    });
+  dataToAdd = {
+    name: req.body.name,
+    address: req.body.address,
+    email: req.body.email,
+    author: req.body.author,
+    mobileNumber: req.body.mobileNumber,
+    homeNumber: req.body.homeNumber,
+    officeNumber: req.body.officeNumber,
+    image: fileLink,
+    isFavourite: false,
+  };
+  await db.collection("contacts").add(dataToAdd);
+  res.json("Successfully Added");
+});
+
+//for deleting contacts
+router.delete("/delete/:id", async (req, res) => {
+  const { id } = req.params;
+  await db.collection("contacts").doc(id).delete();
+  res.json("successful");
+});
+
+//for updating contact details
+router.put("/update/:id", async (req, res) => {
+  console.log("here");
+
+  const { id } = req.params;
+
+  console.log(id);
+
+  await db.collection("contacts").doc(id).update({
+    name: req.body.name,
+    email: req.body.email,
+    address: req.body.address,
+    mobileNumber: req.body.mobileNumber,
+    homeNumber: req.body.homeNumber,
+    officeNumber: req.body.officeNumber,
+  });
+
+  res.json("successful");
+});
+
+//for making a contact favourite
+router.put("/favourite/:id", async (req, res) => {
+  const { id } = req.params;
+
+  await db.collection("contacts").doc(id).update({
+    isFavourite: req.body.status,
+  });
+
+  res.json("successful");
+});
+/////
 
 router.post("/photo", upload.single("image"), async (req, res) => {
   //
@@ -179,8 +226,38 @@ router.post("/photo", upload.single("image"), async (req, res) => {
   //     });
   //   });
 });
-////
+
+// for user signup
 router.post("/signup", async (req, res) => {
+  //console.log("testing:", req.files.file);
+  console.log("hcvgdsv:", req.body.name);
+  console.log(" test:", req.files.file);
+  const file = req.files.file;
+  let fileLink;
+  //console.log(req.body);
+
+  const FirebaseStorage = firebase.storage();
+  const storageRef = FirebaseStorage.ref(`/images/${file.name}`);
+  await storageRef
+    .put(file.data, {
+      contentType: file.mimetype,
+    })
+    .then(() => storageRef.getDownloadURL()) // after upload, obtain the download URL
+    .then(
+      (url) => {
+        // persisted to storage successfully and obtained download URL
+        fileLink = url;
+      },
+      (err) => {
+        // failed to save to storage
+        return 0;
+      }
+    )
+    .catch((err) => {
+      // if here, something has gone wrong while sending back the response
+      // likely a syntax error, or sending responses multiple times
+      return 0;
+    });
   try {
     const response = await firebase
       .auth()
@@ -190,6 +267,7 @@ router.post("/signup", async (req, res) => {
         uid: response.user.uid,
         name: req.body.name,
         email: req.body.email,
+        image: fileLink,
       });
       res.json({
         response,
@@ -200,6 +278,8 @@ router.post("/signup", async (req, res) => {
     }
   } catch (e) {}
 });
+
+// for user login
 router.post("/login", async (req, res) => {
   await firebase
     .auth()
