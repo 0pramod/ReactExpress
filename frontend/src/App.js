@@ -49,7 +49,6 @@ const logOut = () => {
 let verifyUserToken = async () => {
   const token = localStorage.getItem("idToken");
   const response = await axios.post(`/verify/${token}`);
-  console.log(response.data.verified);
   return response.data.verified;
 };
 
