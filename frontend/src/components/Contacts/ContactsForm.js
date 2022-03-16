@@ -2,7 +2,7 @@ import "./form.css";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import Nav from "../Nav";
+import Nav from "../Nav/Nav";
 
 export default function ContactsForm() {
   const location = useLocation();

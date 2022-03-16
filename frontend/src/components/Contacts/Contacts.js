@@ -3,8 +3,8 @@ import "./form.css";
 
 import axios from "axios";
 import { Link, useHistory } from "react-router-dom";
-import Nav from "../Nav";
-import UpdateContacts from "./UpdateContacts";
+import Nav from "../Nav/Nav";
+
 export default function Contacts() {
   const history = useHistory();
   const [contactResponse, setcontactResponse] = useState({});
