@@ -29,5 +29,13 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0pramod/ReactExpress.git"
+  },
+  "bugs": {
+    "url": "https://github.com/0pramod/ReactExpress/issues"
+  },
+  "homepage": "https://github.com/0pramod/ReactExpress#readme"
 }

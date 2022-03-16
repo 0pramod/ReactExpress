@@ -7,6 +7,7 @@ import {
   Link,
 } from "react-router-dom";
 import "./App.css";
+import axios from "axios";
 import Login from "./components/Login/Login";
 import Nav from "./components/Nav";
 import Signup from "./components/Login/Signup";
@@ -16,20 +17,22 @@ import Contacts from "./components/Contacts/Contacts";
 import ContactsForm from "./components/Contacts/ContactsForm";
 import UpdateContacts from "./components/Contacts/UpdateContacts";
 import Test from "./components/Test";
+
 function App() {
   return (
     <BrowserRouter>
       <div>
         <Switch>
-          <Route path="/nav" component={Nav} />
+          {/* <Route path="/nav" component={Nav} />
           <Route path="/test" component={Test} />
-          <Route path="/form" component={ContactsForm} />
           <Route path="/home" component={Home} />
-          <Route path="/login" component={Login} exact />
-          <Route path="/signup" component={Signup} />
-          <AuthRoute path="/contacts" component={Contacts} />
           <AddRoute path="/addcontacts" component={AddContacts} />
-          <UpdateRoute path="/updatecontacts" component={UpdateContacts} />
+          <UpdateRoute path="/updatecontacts" component={UpdateContacts} /> */}
+          <FormRoute path="/form" component={ContactsForm} />
+          <Route path="/login" component={Login} />
+          <Route path="/signup" component={Signup} />
+          <HomeRoute path="/" component={Contacts} />
+
           <Route component={Error} />
         </Switch>
       </div>
@@ -37,7 +40,7 @@ function App() {
   );
 }
 
-function AuthRoute({ children, ...rest }) {
+function HomeRoute({ children, ...rest }) {
   const isUserLogIn = localStorage.getItem("idToken");
 
   if (!isUserLogIn) {
@@ -46,23 +49,42 @@ function AuthRoute({ children, ...rest }) {
     return <Contacts />;
   }
 }
-function AddRoute({ children, ...rest }) {
+function FormRoute({ children, ...rest }) {
   const isUserLogIn = localStorage.getItem("idToken");
 
   if (!isUserLogIn) {
     return <Redirect to={{ pathname: "/login" }} />;
   } else {
-    return <AddContacts />;
+    return <ContactsForm />;
   }
 }
-function UpdateRoute({ children, ...rest }) {
-  const isUserLogIn = localStorage.getItem("idToken");
+// function AddRoute({ children, ...rest }) {
+//   const isUserLogIn = localStorage.getItem("idToken");
 
-  if (!isUserLogIn) {
-    return <Redirect to={{ pathname: "/login" }} />;
-  } else {
-    return <UpdateContacts />;
-  }
-}
+//   if (!isUserLogIn) {
+//     return <Redirect to={{ pathname: "/login" }} />;
+//   } else {
+//     return <AddContacts />;
+//   }
+// }
+// function UpdateRoute({ children, ...rest }) {
+//   const isUserLogIn = localStorage.getItem("idToken");
 
+//   if (!isUserLogIn) {
+//     return <Redirect to={{ pathname: "/login" }} />;
+//   } else {
+//     return <UpdateContacts />;
+//   }
+// }
+// const checkUserStatus = async () => {
+//   let userStatus;
+//   const userToken = localStorage.getItem("idToken");
+//   console.log(userToken);
+//   const response = await axios.get(`/verify/${userToken}`);
+//   response ? (userStatus = true) : (userStatus = false);
+//   console.log(userStatus);
+//   return userStatus;
+// };
+
+// //console.log(checkUserStatus());
 export default App;

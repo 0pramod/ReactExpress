@@ -57,6 +57,13 @@ export default function ContactsForm() {
 
     if (formMode === "create") {
       const response = await axios.post("/add", formData);
+      // response ? (
+      //   (window.location.href = "http://localhost:3000/contacts")
+      // ) : (
+      //   <>
+      //     <div>work in progress</div>
+      //   </>
+      // );
       if (response.status === 200) {
         window.location.href = "http://localhost:3000/contacts";
       }
@@ -72,12 +79,12 @@ export default function ContactsForm() {
   return (
     <>
       <Nav></Nav>
-      <form onSubmit={handleSubmit} class="row g-3">
+      <form onSubmit={handleSubmit} className="row g-3">
         <div className="contact-form card shadow">
+          <h3>{formMode === "create" ? "Add Contacts" : "Update Contacts"}</h3>
+          <hr></hr>
           <div className="mb-3">
-            <label for="formGroupExampleInput" className="form-label">
-              Name
-            </label>
+            <label className="form-label">Name</label>
             <input
               type="text"
               className="form-control"
@@ -89,9 +96,7 @@ export default function ContactsForm() {
             />
           </div>
           <div className="mb-3">
-            <label for="formGroupExampleInput2" className="form-label">
-              Email
-            </label>
+            <label className="form-label">Email</label>
             <input
               type="text"
               className="form-control"
@@ -103,9 +108,7 @@ export default function ContactsForm() {
             />
           </div>
           <div className="mb-3">
-            <label for="formGroupExampleInput2" className="form-label">
-              Address
-            </label>
+            <label className="form-label">Address</label>
             <input
               type="text"
               className="form-control"
@@ -116,29 +119,25 @@ export default function ContactsForm() {
               onChange={(e) => setAddress(e.target.value)}
             />
           </div>
-          <label for="formGroupExampleInput2" className="form-label">
-            Image
-          </label>
-          <div class="input-group mb-3">
+          <label className="form-label">Image</label>
+          <div className="input-group mb-3">
             <input
               id="inputGroupFile02"
               type="file"
-              class="form-control"
-              required
+              className="form-control"
+              required={formMode === "create" ? "required" : ""}
               onChange={(e) => setImageFile(e.target.files[0])}
             />
           </div>
           <div className="mb-3">
-            <label for="formGroupExampleInput2" className="form-label">
-              Phone Numbers
-            </label>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">
+            <label className="form-label">Phone Numbers</label>
+            <div className="input-group mb-3">
+              <span className="input-group-text" id="basic-addon1">
                 Mobile
               </span>
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 placeholder="..."
                 aria-label="Username"
                 aria-describedby="basic-addon1"
@@ -146,13 +145,13 @@ export default function ContactsForm() {
                 onChange={(e) => setMobileNumber(e.target.value)}
               />
             </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">
+            <div className="input-group mb-3">
+              <span className="input-group-text" id="basic-addon1">
                 Home
               </span>
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 placeholder="..."
                 aria-label="Username"
                 aria-describedby="basic-addon1"
@@ -160,13 +159,13 @@ export default function ContactsForm() {
                 onChange={(e) => setHomeNumber(e.target.value)}
               />
             </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">
+            <div className="input-group mb-3">
+              <span className="input-group-text" id="basic-addon1">
                 Office
               </span>
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 placeholder="..."
                 aria-label="Username"
                 aria-describedby="basic-addon1"
@@ -175,8 +174,8 @@ export default function ContactsForm() {
               />
             </div>
           </div>
-          <div class="col-auto">
-            <button type="submit" class="btn btn-primary">
+          <div className="col-auto">
+            <button type="submit" className="btn btn-primary">
               {formMode}
             </button>
           </div>

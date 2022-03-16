@@ -1,13 +1,10 @@
 import React from "react";
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-  Switch,
-  Redirect,
-  Link,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 export default function Nav() {
+  const logOut = () => {
+    window.localStorage.clear();
+    window.location.reload(true);
+  };
   return (
     <>
       <nav className="navbar shadow navbar-expand-lg navbar-light bg-light">
@@ -45,17 +42,17 @@ export default function Nav() {
                 </Link>
               </li>
             </ul>
-            <form className="d-flex">
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button className="btn btn-outline-success" type="submit">
-                Logout
-              </button>
-            </form>
+
+            {localStorage.getItem("email")}
+
+            <br></br>
+            <button
+              className="btn btn-outline-success"
+              onClick={(e) => logOut(e)}
+              type="submit"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </nav>

@@ -2,20 +2,21 @@ import React, { useState, useEffect } from "react";
 import "./form.css";
 
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Nav from "../Nav";
 import UpdateContacts from "./UpdateContacts";
 export default function Contacts() {
+  const history = useHistory();
   const [contactResponse, setcontactResponse] = useState({});
   const [loading, setLoading] = useState(true);
 
-  const fetchData = useEffect(() => {
+  let fetchData = useEffect(() => {
     const getDataFromBackend = async () => {
       var author = localStorage.getItem("uid");
       const response = await axios.get(`/contacts/${author}`);
 
       setcontactResponse(response.data);
-
+      console.log("jhghsd");
       setLoading(false);
     };
     getDataFromBackend();
@@ -23,24 +24,24 @@ export default function Contacts() {
   const deleteData = async (e, id) => {
     e.preventDefault();
     const response = await axios.delete(`/delete/${id}`);
-    if (response.data === "successful") fetchData(); //window.location.reload(true);
+    if (response.data === "successful") {
+      alert("Deleted");
+      window.location.reload(true);
+    }
   };
   const makeFavourite = async (e, id, status) => {
     e.preventDefault();
     const response = await axios.put(`/favourite/${id}`, {
       status: !status,
     });
-    if (response.data === "successful") window.location.reload(true); //fetchData();
-  };
-  const logOut = () => {
-    window.localStorage.clear();
+    if (response.data === "successful") alert("Success");
     window.location.reload(true);
   };
-  let x = 19;
+
   return (
     <>
       {loading ? (
-        "Loading"
+        "Loading..."
       ) : (
         <>
           <Nav></Nav>
@@ -52,12 +53,12 @@ export default function Contacts() {
                   <div className="contacts-card">
                     <br></br>
                     <div
-                      class="card shadow p-3 mb-5 bg-body rounded"
+                      className="card shadow p-3 mb-5 bg-body rounded"
                       style={{ width: "25rem" }}
                     >
-                      <div class=" d-md-flex justify-content-md-end">
+                      <div className=" d-md-flex justify-content-md-end">
                         <button
-                          class="btn btn-sm btn-light "
+                          className="btn btn-sm btn-light "
                           onClick={(e) =>
                             makeFavourite(e, person.ID, person.DATA.isFavourite)
                           }
@@ -73,7 +74,7 @@ export default function Contacts() {
                                 ? "#ffdf00"
                                 : "currentfill"
                             }
-                            class="bi bi-star"
+                            className="bi bi-star"
                             viewBox="0 0 15 15"
                           >
                             <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
@@ -83,39 +84,39 @@ export default function Contacts() {
 
                       <img
                         src={person.DATA.image}
-                        class="card-img-top"
+                        className="card-img-top"
                         alt="..."
                       />
-                      <div class="card-body">
-                        <h5 class="card-title">{person.DATA.name}</h5>{" "}
-                        <p class="card-text">{person.DATA.email}</p>
-                        <p class="card-text">{person.DATA.address}</p>
+                      <div className="card-body">
+                        <h5 className="card-title">{person.DATA.name}</h5>{" "}
+                        <p className="card-text">{person.DATA.email}</p>
+                        <p className="card-text">{person.DATA.address}</p>
                       </div>
-                      <ul class="list-group list-group-flush">
+                      <ul className="list-group list-group-flush">
                         {person.DATA.homeNumber ? (
-                          <li class="list-group-item">
+                          <li className="list-group-item">
                             Home: {person.DATA.homeNumber}
                           </li>
                         ) : (
                           <></>
                         )}
                         {person.DATA.mobileNumber ? (
-                          <li class="list-group-item">
+                          <li className="list-group-item">
                             Mobile: {person.DATA.mobileNumber}
                           </li>
                         ) : (
                           <></>
                         )}
                         {person.DATA.officeNumber ? (
-                          <li class="list-group-item">
+                          <li className="list-group-item">
                             Office: {person.DATA.officeNumber}
                           </li>
                         ) : (
                           <></>
                         )}
                       </ul>
-                      <div class="card-body">
-                        <button class="card-link btn btn-warning">
+                      <div className="card-body">
+                        <button className="card-link btn btn-warning">
                           <Link
                             to={{
                               pathname: "/form",
@@ -134,7 +135,7 @@ export default function Contacts() {
                           </Link>
                         </button>
                         <button
-                          class=" card-link btn btn-danger"
+                          className=" card-link btn btn-danger"
                           onClick={(e) => deleteData(e, person.ID)}
                         >
                           Delete
@@ -145,14 +146,6 @@ export default function Contacts() {
                   </div>
                 ))}
             </ul>
-            <button
-              onClick={(e) => {
-                window.location.href = "http://localhost:3000/addcontacts";
-              }}
-            >
-              Add Contacts
-            </button>
-            <button onClick={(e) => logOut(e)}> Logout</button>
           </div>
         </>
       )}
