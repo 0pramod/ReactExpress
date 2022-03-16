@@ -117,7 +117,6 @@ export default function ContactsForm() {
               id="inputGroupFile02"
               type="file"
               className="form-control"
-              required={formMode === "create" ? "required" : ""}
               onChange={(e) => setImageFile(e.target.files[0])}
             />
           </div>

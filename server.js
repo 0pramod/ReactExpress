@@ -32,9 +32,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+const FirebaseStorage = firebase.storage();
 
 const fileupload = require("express-fileupload");
 app.use(fileupload());
@@ -46,7 +44,7 @@ var xhr = new XMLHttpRequest();
 router.get("/contacts/:author", async (req, res) => {
   const { author } = req.params;
 
-  const allData = await db
+  const contactsData = await db
     .collection("contacts")
     .where("author", "==", author)
     .orderBy("isFavourite", "desc")
@@ -55,16 +53,13 @@ router.get("/contacts/:author", async (req, res) => {
     .then((querySnapshot) =>
       querySnapshot.docs.map((doc) => ({ ID: doc.id, DATA: doc.data() }))
     );
-
-  res.json(allData);
+  if (contactsData) res.json(contactsData);
 });
 
 // for adding new contacts
 router.post("/add", async (req, res) => {
   const file = req.files.file;
   let fileLink;
-
-  const FirebaseStorage = firebase.storage();
   const storageRef = FirebaseStorage.ref(`/images/${file.name}`);
   await storageRef
     .put(file.data, {
@@ -123,12 +118,12 @@ router.put("/update/:id", async (req, res) => {
 //for making a contact favourite
 router.put("/favourite/:id", async (req, res) => {
   const { id } = req.params;
-
-  await db.collection("contacts").doc(id).update({
-    isFavourite: req.body.status,
-  });
-
-  res.json("successful");
+  if (
+    await db.collection("contacts").doc(id).update({
+      isFavourite: req.body.status,
+    })
+  )
+    res.json("successful");
 });
 /////
 
@@ -170,17 +165,16 @@ router.post("/login", async (req, res) => {
           });
         })
         .catch(function (error) {
-          console.log("sorry");
+          res.status(204).json({ message: error });
         });
     })
     .catch(function (error) {
-      console.log("sorry");
+      res.status(204).json({ message: error });
     });
-  console.log("here");
 });
 
 const port = 5000;
 app.use("/", router);
 app.listen(port, () => {
-  console.log(`server reunning at port: ${port}`);
+  //console.log(`server reunning at port: ${port}`);
 });

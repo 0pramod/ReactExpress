@@ -8,6 +8,7 @@ export default function Login() {
   const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   function validateForm() {
     return (
@@ -29,11 +30,22 @@ export default function Login() {
     localStorage.setItem("idToken", response.data.idToken);
     localStorage.setItem("email", response.data.email);
 
-    if (response.status === 200) history.push("/");
+    if (response.status === 200) {
+      history.push("/");
+    } else {
+      setErrorMessage("Can't Login try again");
+    }
   };
 
   return (
     <div>
+      {errorMessage ? (
+        <div class="alert alert-dark" id="error-message" role="alert">
+          {errorMessage}
+        </div>
+      ) : (
+        ""
+      )}
       <form className="row g-3" onSubmit={handleSubmit}>
         <div className="contact-form card shadow">
           <h2> Log In </h2>

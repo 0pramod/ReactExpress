@@ -2,31 +2,29 @@ import React, { useState, useEffect } from "react";
 import "./form.css";
 
 import axios from "axios";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Nav from "../Nav/Nav";
 
 export default function Contacts() {
-  const history = useHistory();
   const [contactResponse, setcontactResponse] = useState({});
   const [loading, setLoading] = useState(true);
+  const [reload, setReload] = useState(0);
 
-  let fetchData = useEffect(() => {
+  useEffect(() => {
     const getDataFromBackend = async () => {
       var author = localStorage.getItem("uid");
       const response = await axios.get(`/contacts/${author}`);
-
       setcontactResponse(response.data);
-      console.log("jhghsd");
       setLoading(false);
     };
+
     getDataFromBackend();
-  }, []);
+  }, [reload]);
   const deleteData = async (e, id) => {
     e.preventDefault();
     const response = await axios.delete(`/delete/${id}`);
     if (response.data === "successful") {
-      alert("Deleted");
-      window.location.reload(true);
+      setReload(!reload);
     }
   };
   const makeFavourite = async (e, id, status) => {
@@ -34,8 +32,7 @@ export default function Contacts() {
     const response = await axios.put(`/favourite/${id}`, {
       status: !status,
     });
-    if (response.data === "successful") alert("Success");
-    window.location.reload(true);
+    if (response.data === "successful") setReload(!reload);
   };
 
   return (
