@@ -8,6 +8,7 @@ const router = express.Router();
 const bodyParser = require("body-parser");
 var admin = require("firebase-admin");
 require("firebase/auth");
+const getAuth = require("firebase/auth");
 const firebaseConfig = {
   apiKey: process.env.API_KEY,
   authDomain: process.env.AUTH_DOMAIN,
@@ -18,7 +19,7 @@ const firebaseConfig = {
   measurementId: process.env.MEASUREMENT_ID,
 };
 
-firebase.initializeApp(firebaseConfig);
+const ff = firebase.initializeApp(firebaseConfig);
 var serviceAccount = require("../firebase/serviceAccountKey.json");
 const res = require("express/lib/response");
 const { path } = require("express/lib/application");
@@ -33,6 +34,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 const FirebaseStorage = firebase.storage();
+
+// const auth = getAuth(ff);
 
 const fileupload = require("express-fileupload");
 app.use(fileupload());
@@ -171,8 +174,24 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/verify/:token", async (req, res) => {
+  const { token } = req.params;
+  admin
+    .auth()
+    .verifyIdToken(token)
+    .then((decodedToken) => {
+      res.json({
+        verified: true,
+      });
+    })
+    .catch((error) => {
+      res.json({
+        verified: false,
+      });
+    });
+});
 const port = 5000;
 app.use("/", router);
 app.listen(port, () => {
-  //console.log(`server reunning at port: ${port}`);
+  console.log(`server reunning at port: ${port}`);
 });
