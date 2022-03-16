@@ -1,15 +1,14 @@
 import "./form.css";
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import axios from "axios";
 import Nav from "../Nav/Nav";
 
 export default function ContactsForm() {
+  const history = useHistory();
   const location = useLocation();
   const contactsData = location.state;
-  //console.log(contactsData);
 
-  //console.log(contactsData.type);
   var formMode;
 
   if (contactsData) {
@@ -17,7 +16,7 @@ export default function ContactsForm() {
   } else {
     formMode = "create";
   }
-  console.log(formMode);
+
   const [contactID, setContactId] = useState(
     formMode === "create" ? "" : contactsData.docID
   );
@@ -57,21 +56,14 @@ export default function ContactsForm() {
 
     if (formMode === "create") {
       const response = await axios.post("/add", formData);
-      // response ? (
-      //   (window.location.href = "http://localhost:3000/contacts")
-      // ) : (
-      //   <>
-      //     <div>work in progress</div>
-      //   </>
-      // );
       if (response.status === 200) {
-        window.location.href = "http://localhost:3000/contacts";
+        history.push("/");
       }
     }
     if (formMode === "update") {
       const response = await axios.put(`/update/${contactID}`, formData);
       if (response.status === 200) {
-        window.location.href = "http://localhost:3000/contacts";
+        history.push("/");
       }
     }
   };

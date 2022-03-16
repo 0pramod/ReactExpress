@@ -25,18 +25,11 @@ export default function Login() {
       email,
       password,
     });
-    //console.log(response);
     localStorage.setItem("uid", response.data.uid);
     localStorage.setItem("idToken", response.data.idToken);
     localStorage.setItem("email", response.data.email);
-    //localStorage.setItem("image", response.data.image);
-    if (response.status === 200) {
-      // console.log("here");
-      //window.location.href = "http://localhost:3000/contacts";
-      history.push("/");
-    } else {
-      console.log(response);
-    }
+
+    if (response.status === 200) history.push("/");
   };
 
   return (
@@ -72,7 +65,7 @@ export default function Login() {
               disabled={!validateForm()}
               className="btn btn-primary"
             >
-              Signup
+              Log In
             </button>
           </div>
           <br></br>{" "}
