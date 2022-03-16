@@ -174,22 +174,6 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/verify/:token", async (req, res) => {
-  const { token } = req.params;
-  admin
-    .auth()
-    .verifyIdToken(token)
-    .then((decodedToken) => {
-      res.json({
-        verified: true,
-      });
-    })
-    .catch((error) => {
-      res.json({
-        verified: false,
-      });
-    });
-});
 const port = 5000;
 app.use("/", router);
 app.listen(port, () => {

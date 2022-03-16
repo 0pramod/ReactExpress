@@ -24,32 +24,36 @@ function App() {
 }
 
 function HomeRoute({ children, ...rest }) {
-  const isUserLogIn = verifyUserToken();
+  const isUserLogIn = localStorage.getItem("idToken");
 
   if (!isUserLogIn) {
     return <Redirect to={{ pathname: "/login" }} />;
   } else {
-    logOut();
+    console.log(isUserLogIn);
     return <Contacts />;
   }
 }
 function FormRoute({ children, ...rest }) {
-  const isUserLogIn = verifyUserToken(); //localStorage.getItem("idToken");
+  const isUserLogIn = localStorage.getItem("idToken");
 
   if (!isUserLogIn) {
     return <Redirect to={{ pathname: "/login" }} />;
   } else {
-    logOut();
     return <ContactsForm />;
   }
 }
 const logOut = () => {
   window.localStorage.clear();
 };
-let verifyUserToken = async () => {
+let verifyUserToken = () => {
   const token = localStorage.getItem("idToken");
-  const response = await axios.post(`/verify/${token}`);
-  return response.data.verified;
+  if (token) {
+    const response = axios.post(`/verify/${token}`);
+    if (response.data.verified === false) logOut();
+    return response.data.verified;
+  } else {
+    return false;
+  }
 };
 
 export default App;
