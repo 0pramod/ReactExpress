@@ -174,7 +174,13 @@ router.post("/login", async (req, res) => {
   }
 });
 
-const port = 5000;
+const port = process.env.PORT || 5000;
+if (process.env.MODE_ENV === "production") {
+  app.use(express.static("../frontend/build"));
+  app.get("*", (req, res) => {
+    req.sendFile(path.resolve(__dirname, "build", "index.html"));
+  });
+}
 app.use("/", router);
 app.listen(port, () => {
   // console.log(`server reunning at port: ${port}`);
