@@ -1,52 +1,32 @@
 require("dotenv").config();
+require("firebase/auth");
 const express = require("express");
 const cors = require("cors");
-
-const firebase = require("firebase");
-const { storage, getStorage, ref, uploadBytes } = require("firebase/storage");
 const router = express.Router();
 const bodyParser = require("body-parser");
-var admin = require("firebase-admin");
-require("firebase/auth");
-const getAuth = require("firebase/auth");
-const firebaseConfig = {
-  apiKey: process.env.API_KEY,
-  authDomain: process.env.AUTH_DOMAIN,
-  projectId: process.env.PROJECT_ID,
-  storageBucket: process.env.STORAGE_BUCKET,
-  messagingSenderId: process.env.MESSAGING_SENDER_ID,
-  appId: process.env.APP_ID,
-  measurementId: process.env.MEASUREMENT_ID,
-};
-
-const ff = firebase.initializeApp(firebaseConfig);
-var serviceAccount = require("../firebase/serviceAccountKey.json");
 const res = require("express/lib/response");
 const { path } = require("express/lib/application");
-
-const fire = admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-
-const db = admin.firestore();
 const app = express();
+const fileupload = require("express-fileupload");
+const XMLHttpRequest = require("xhr2");
+const xhr = new XMLHttpRequest();
+const {
+  firebase,
+  admin,
+  getAuth,
+  db,
+  FirebaseStorage,
+} = require("./firebase/firebase.js");
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-const FirebaseStorage = firebase.storage();
-
-// const auth = getAuth(ff);
-
-const fileupload = require("express-fileupload");
 app.use(fileupload());
 global.XMLHttpRequest = require("xhr2");
-var XMLHttpRequest = require("xhr2");
-var xhr = new XMLHttpRequest();
 
-//for contacts page
+//route for contacts page
 router.get("/contacts/:author", async (req, res) => {
   const { author } = req.params;
-
   const contactsData = await db
     .collection("contacts")
     .where("author", "==", author)
@@ -56,10 +36,10 @@ router.get("/contacts/:author", async (req, res) => {
     .then((querySnapshot) =>
       querySnapshot.docs.map((doc) => ({ ID: doc.id, DATA: doc.data() }))
     );
-  if (contactsData) res.json(contactsData);
+  contactsData ? res.json(contactsData) : res.json("can't fetch data");
 });
 
-// for adding new contacts
+//route for adding new contacts
 router.post("/add", async (req, res) => {
   const file = req.files.file;
   let fileLink;
@@ -73,12 +53,12 @@ router.post("/add", async (req, res) => {
       (url) => {
         fileLink = url;
       },
-      (err) => {
-        return 0;
+      (error) => {
+        res.json(error);
       }
     )
-    .catch((err) => {
-      return 0;
+    .catch((error) => {
+      res.json(error);
     });
   dataToAdd = {
     name: req.body.name,
@@ -91,44 +71,43 @@ router.post("/add", async (req, res) => {
     image: fileLink,
     isFavourite: false,
   };
-  await db.collection("contacts").add(dataToAdd);
-  res.json("Successfully Added");
+  if (fileLink) {
+    await db.collection("contacts").add(dataToAdd);
+    res.json("Successfully Added");
+  } else res.json("unsuccessfull");
 });
 
-//for deleting contacts
+//route for deleting contacts
 router.delete("/delete/:id", async (req, res) => {
   const { id } = req.params;
-  if (await db.collection("contacts").doc(id).delete()) res.json("successful");
+  const didDeleted = await db.collection("contacts").doc(id).delete();
+  didDeleted ? res.json("successful") : res.json("Delete unsuccessful");
 });
 
 //for updating contact details
 router.put("/update/:id", async (req, res) => {
   const { id } = req.params;
 
-  if (
-    await db.collection("contacts").doc(id).update({
-      name: req.body.name,
-      email: req.body.email,
-      address: req.body.address,
-      mobileNumber: req.body.mobileNumber,
-      homeNumber: req.body.homeNumber,
-      officeNumber: req.body.officeNumber,
-    })
-  )
-    res.json("successful");
+  const didUpdate = await db.collection("contacts").doc(id).update({
+    name: req.body.name,
+    email: req.body.email,
+    address: req.body.address,
+    mobileNumber: req.body.mobileNumber,
+    homeNumber: req.body.homeNumber,
+    officeNumber: req.body.officeNumber,
+  });
+  didUpdate ? res.json("successful") : res.json("Update unsuccessful");
 });
 
 //for making a contact favourite
 router.put("/favourite/:id", async (req, res) => {
   const { id } = req.params;
-  if (
-    await db.collection("contacts").doc(id).update({
-      isFavourite: req.body.status,
-    })
-  )
-    res.json("successful");
+  (await db.collection("contacts").doc(id).update({
+    isFavourite: req.body.status,
+  }))
+    ? res.json("successful")
+    : res.json("Unsuccessful");
 });
-/////
 
 // for user signup
 router.post("/signup", async (req, res) => {
@@ -169,8 +148,8 @@ router.post("/login", async (req, res) => {
             });
           });
       });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    res.json(error);
   }
 });
 
@@ -183,5 +162,5 @@ if (process.env.MODE_ENV === "production") {
 }
 app.use("/", router);
 app.listen(port, () => {
-  // console.log(`server reunning at port: ${port}`);
+  console.log(`server reunning at port: ${port}`);
 });

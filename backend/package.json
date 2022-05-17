@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Reace Express app",
   "main": "server.js",
+ 
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "server": "nodemon server.js",
-    "type": "module",
     "heroku-postbuild": "cd .. && cd frontend %% npm install &&npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "author": "Pramod Yadav",
@@ -29,6 +29,10 @@
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.10",
+    "@babel/node": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
+    "@babel/register": "^7.17.7",
     "nodemon": "^2.0.15"
   },
   "repository": {
