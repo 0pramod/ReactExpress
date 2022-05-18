@@ -42,18 +42,5 @@ function FormRoute({ children, ...rest }) {
     return <ContactsForm />;
   }
 }
-const logOut = () => {
-  window.localStorage.clear();
-};
-let verifyUserToken = () => {
-  const token = localStorage.getItem("idToken");
-  if (token) {
-    const response = axios.post(`/verify/${token}`);
-    if (response.data.verified === false) logOut();
-    return response.data.verified;
-  } else {
-    return false;
-  }
-};
 
 export default App;
